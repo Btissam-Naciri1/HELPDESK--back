@@ -12,19 +12,30 @@ public class App_user {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String nomcomplet;
     private String email;
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Type_utilisateur typeUtilisateur;
 
-    public App_user(Long id, String email, String password, Type_utilisateur typeUtilisateur) {
-        this.id = id;
+    public App_user( String email,String nomcomplet, String password, Type_utilisateur typeUtilisateur) {
         this.email = email;
+        this.nomcomplet=nomcomplet;
         this.password = password;
         this.typeUtilisateur = typeUtilisateur;
     }
+
+    public void setNomcomplet(String nomcomplet) {
+        this.nomcomplet = nomcomplet;
+    }
+
     public App_user() {
+    }
+
+    public String getNomcomplet() {
+        return nomcomplet;
     }
 
     public Long getId() {

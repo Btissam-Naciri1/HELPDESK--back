@@ -16,5 +16,21 @@ public class UserDto {
     private Type_utilisateur typeUtilisateur;
     private String adresse;
     private String telephone;
+    private String nomcomplet;
     private List<String> groups; // Only applicable for Admin N2
+
+    // ✅ Constructor
+    public UserDto( String email, String nomcomplet, Type_utilisateur typeUtilisateur) {
+        this.email = email;
+        this.nomcomplet = nomcomplet;
+        this.typeUtilisateur = typeUtilisateur;
+    }
+
+
+
+    // ✅ Getters
+    public Long getId() { return id; }
+    public String getEmail() { return email; }
+    public String getNomcomplet() { return nomcomplet; }
+    public Type_utilisateur getTypeUtilisateur() { return typeUtilisateur; }
 }

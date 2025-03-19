@@ -18,7 +18,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -38,32 +37,36 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Enable CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Fix: Enable CORS
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // ✅ Stateless JWT
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/login", "/auth/register").permitAll();
+                    // ✅ Public routes (No authentication required)
+                    auth.requestMatchers("/auth/login", "/auth/register" , "/auth/users").permitAll();
+                    auth.requestMatchers("/admin-n2/register", "/admin-n2/login").permitAll();
 
-                    auth.requestMatchers("/admin-n2/register", "/admin-n2/login").permitAll(); // ✅ Explicitly allow login/register
+                    // ✅ Role-based routes
                     auth.requestMatchers("/api/admin-n1/**").hasAuthority("ADMIN_N1");
                     auth.requestMatchers("/api/admin-n2/**").hasAuthority("ADMIN_N2");
-                    auth.anyRequest().authenticated(); // ✅ All other requests need authentication
+
+                    // ✅ Protect all other endpoints
+                    auth.anyRequest().authenticated();
                 })
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(
                         (request, response, authException) -> {
                             response.setStatus(403);
                             response.getWriter().write("Forbidden: " + authException.getMessage());
                         }
-                )) // ✅ Proper exception handling
+                )) // ✅ Handle unauthorized requests
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    // ✅ Fix: CORS Configuration
+    // ✅ Fix: Proper CORS Configuration (Allow Frontend Access)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("*")); // Allow all origins
+        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // ✅ Allow frontend domain
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
 

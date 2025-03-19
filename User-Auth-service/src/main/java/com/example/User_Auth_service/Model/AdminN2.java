@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminN2 extends App_user {
 
+    private String nom_complet;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
