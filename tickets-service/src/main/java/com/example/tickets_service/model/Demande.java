@@ -15,8 +15,9 @@ public class Demande {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String etat;  // Request status (Assigned, Pending, etc.)
-    private String titre;  // Title of the request
+
+    private String etat;  // "En cours", "Assigné", "Terminé", etc.
+    private String titre;  // Title of the request.
 
     @Lob
     @Column(length = 10000)
@@ -63,6 +64,9 @@ public class Demande {
     private boolean detecteParNexthink;  // Was it detected by Nexthink?
     private String etatWorkflow;
 
+    private String userResponse; // "Oui", "Non", or NULL
+    private LocalDateTime validationStartTime; // When validation started
+    private boolean notificationSent; // To track if the user was notified
 
     public String getEtatWorkflow() {
         return etatWorkflow;
@@ -237,6 +241,46 @@ public class Demande {
 
     public String getComposantService() {
         return composantService;
+    }
+
+    public boolean isNotificationSent() {
+        return notificationSent;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getDateCreation() {
+        return dateCreation;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setEtatWorkflow(String etatWorkflow) {
+        this.etatWorkflow = etatWorkflow;
+    }
+
+    public String getUserResponse() {
+        return userResponse;
+    }
+
+    public void setUserResponse(String userResponse) {
+        this.userResponse = userResponse;
+    }
+
+    public LocalDateTime getValidationStartTime() {
+        return validationStartTime;
+    }
+
+    public void setValidationStartTime(LocalDateTime validationStartTime) {
+        this.validationStartTime = validationStartTime;
+    }
+
+    public void setNotificationSent(boolean notificationSent) {
+        this.notificationSent = notificationSent;
     }
 
     public void setComposantService(String composantService) {

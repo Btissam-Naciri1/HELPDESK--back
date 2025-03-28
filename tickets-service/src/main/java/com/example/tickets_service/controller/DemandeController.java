@@ -83,33 +83,22 @@ public class DemandeController {
 
     @GetMapping("/{id}/workflow")
     public ResponseEntity<?> getWorkflowStatus(@PathVariable Long id) {
-        Optional<Demande> demandeOpt = demandeService.getDemandeById(id);
+        return demandeService.getWorkflowStatus(id);
+    }
+    @GetMapping("/{id}/check-validation")
+    public ResponseEntity<?> checkWorkflowValidation(@PathVariable Long id) {
+        return demandeService.checkValidation(id);
+    }
 
-        if (demandeOpt.isPresent()) {
-            Demande demande = demandeOpt.get();
-
-            // ✅ Define workflow progress
-            List<String> workflowSteps = List.of(
-                    "Consigner",
-                    "Approuver",
-                    "Exécuter",
-                    "Accepter",
-                    "Examiner",
-                    "Clôturer",
-                    "Abandonner"
-            );
-
-            // ✅ Find current step index
-            int currentStepIndex = workflowSteps.indexOf(demande.getEtatWorkflow());
-
-            return ResponseEntity.ok(Map.of(
-                    "currentStep", demande.getEtatWorkflow(),
-                    "workflowSteps", workflowSteps,
-                    "currentStepIndex", currentStepIndex
-            ));
-        }
-
-        return ResponseEntity.notFound().build();
+    // ✅ Handle user response (Oui = Terminé, Non = Examiner)
+    @PutMapping("/{id}/user-response")
+    public ResponseEntity<?> updateUserResponse(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        return demandeService.updateUserResponse(id, request.get("userResponse"));
+    }
+    @GetMapping("/test-auto-close")
+    public ResponseEntity<?> testAutoClose() {
+        demandeService.autoCloseExpiredValidations();
+        return ResponseEntity.ok("Auto-close check executed.");
     }
 
 }
